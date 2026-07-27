@@ -463,7 +463,7 @@ export default function Home() {
           <div className="empty-compare">
             <span
               className="yoshi-pose yoshi-pose-pointing"
-              style={{ backgroundImage: `url(${import.meta.env.BASE_URL}yoshi-poses.png)` }}
+              style={{ backgroundImage: `url(${import.meta.env.BASE_URL}yoshi-poses-transparent.png)` }}
               aria-hidden="true"
             />
             <div>
@@ -555,7 +555,7 @@ export default function Home() {
                   </div>
                   <span
                     className="yoshi-pose yoshi-pose-thinking"
-                    style={{ backgroundImage: `url(${import.meta.env.BASE_URL}yoshi-poses.png)` }}
+                    style={{ backgroundImage: `url(${import.meta.env.BASE_URL}yoshi-poses-transparent.png)` }}
                     aria-hidden="true"
                   />
                   <span>{studentRealities[selected.name].length}件</span>
@@ -618,6 +618,15 @@ export default function Home() {
               >大学・医学部公式サイト ↗</a>
               <small>入試情報は上の公式募集要項で最終確認してください。</small>
             </div>
+            <button
+              className="back-to-top"
+              onClick={() => {
+                setSelected(null);
+                window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+              }}
+            >
+              ↑ TOPに戻る
+            </button>
           </section>
         </div>
       )}

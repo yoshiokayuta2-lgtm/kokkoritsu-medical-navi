@@ -207,12 +207,14 @@ footer img{width:105px}
 .official-link{color:var(--blue);font-size:12px;font-weight:800}
 .official-links{display:flex;align-items:center;justify-content:space-between;gap:14px}
 .official-links small{color:var(--muted);font-size:9px;line-height:1.5;text-align:right}
-.reality-section{margin:10px 0 22px;padding:24px 20px 20px;background:#fff8dc;border:2px solid #172031;border-radius:15px;box-shadow:6px 6px 0 #172031}
-.reality-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.back-to-top{width:100%;margin-top:22px;padding:13px 16px;color:#fff;background:var(--navy);border:0;font-size:11px;font-weight:900;letter-spacing:.04em;cursor:pointer}
+.back-to-top:hover{background:#3559d8}
+.reality-section{position:relative;overflow:visible;margin:10px 0 22px;padding:24px 20px 20px;background:#fff8dc;border:2px solid #172031;border-radius:15px;box-shadow:6px 6px 0 #172031}
+.reality-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding-right:105px}
 .reality-kicker{margin:0 0 5px!important;color:#3559d8!important;font-size:8px!important;font-weight:900;letter-spacing:.17em}
 .reality-title-row h3{margin:0;color:#172031;font-size:23px;letter-spacing:-.04em}
 .reality-title-row>span{padding:5px 9px;color:#fff;background:#3559d8;border-radius:999px;font-size:9px;font-weight:900;white-space:nowrap}
-.reality-title-row>.yoshi-pose-thinking{width:76px;height:82px;margin:-27px -5px -34px auto;padding:0;background-color:transparent;background-position:50% 0;border-radius:0}
+.reality-title-row>.yoshi-pose-thinking{position:absolute;z-index:1;top:-54px;right:43px;width:92px;height:154px;margin:0;padding:0;background-color:transparent;background-position:50% 0;background-size:500% auto;border-radius:0;pointer-events:none}
 .reality-intro{margin:11px 0 17px!important;color:#5f584d!important;font-size:10px!important;line-height:1.7!important}
 .reality-list{display:grid;gap:8px}
 .reality-card{background:#fffdf8;border:1px solid #d4c8a3;border-radius:10px;overflow:hidden}
@@ -245,7 +247,8 @@ footer img{width:105px}
   .empty-compare{min-height:140px;padding:14px;gap:8px}
   .empty-compare b{font-size:13px}
   .yoshi-pose-pointing{width:82px;height:110px}
-  .reality-title-row>.yoshi-pose-thinking{width:58px;height:70px;margin:-22px -3px -30px auto}
+  .reality-title-row{padding-right:76px}
+  .reality-title-row>.yoshi-pose-thinking{top:-39px;right:35px;width:66px;height:110px}
 }
 @media(max-width:700px){
   .site-header{height:auto;min-height:66px;padding:12px 17px}
@@ -267,6 +270,8 @@ footer img{width:105px}
   .detail-modal{padding:30px 23px}
   .official-links{align-items:flex-start;flex-direction:column}.official-links small{text-align:left}
   .reality-section{padding:20px 14px 16px}
+  .reality-title-row{padding-right:58px}
+  .reality-title-row>.yoshi-pose-thinking{top:-31px;right:27px;width:52px;height:87px}
   .reality-title-row h3{font-size:20px}
   .reality-body dl>div{grid-template-columns:1fr}
   .reality-body dt{padding-bottom:4px}.reality-body dd{padding-top:4px}
