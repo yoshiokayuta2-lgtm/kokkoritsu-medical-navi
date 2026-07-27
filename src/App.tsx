@@ -196,6 +196,16 @@ const scoreReason = (university: University, axis: Axis) => {
   return `${label}として評価。${connection}`;
 };
 
+type AnalyticsParams = Record<string, string | number | boolean>;
+
+const trackEvent = (eventName: string, params: AnalyticsParams = {}) => {
+  if (typeof window === "undefined") return;
+  const analyticsWindow = window as typeof window & {
+    gtag?: (command: "event", name: string, parameters?: AnalyticsParams) => void;
+  };
+  analyticsWindow.gtag?.("event", eventName, params);
+};
+
 export default function Home() {
   const [query, setQuery] = useState("");
   const [activeAxes, setActiveAxes] = useState<Axis[]>([]);
@@ -235,19 +245,50 @@ export default function Home() {
   const toggleAxis = (axis: Axis) =>
     setActiveAxes((current) => current.includes(axis) ? current.filter((a) => a !== axis) : [...current, axis]);
 
-  const toggleCompare = (name: string) =>
-    setComparison((current) => current.includes(name) ? current.filter((n) => n !== name) : current.length < 2 ? [...current, name] : current);
+  const toggleCompare = (name: string) => {
+    setComparison((current) => {
+      const isRemoving = current.includes(name);
+      const next = isRemoving
+        ? current.filter((n) => n !== name)
+        : current.length < 2
+          ? [...current, name]
+          : current;
+      if (next !== current) {
+        trackEvent("compare_change", {
+          university: name,
+          action: isRemoving ? "remove" : "add",
+          comparison_count: next.length,
+        });
+      }
+      return next;
+    });
+  };
 
   const toggleFavorite = (name: string) => {
     setFavorites((current) => {
-      const next = current.includes(name) ? current.filter((n) => n !== name) : [...current, name];
+      const isRemoving = current.includes(name);
+      const next = isRemoving ? current.filter((n) => n !== name) : [...current, name];
       try {
         localStorage.setItem(favoritesKey, JSON.stringify(next));
       } catch {
         // 保存できない環境でも、この表示中は選択状態を維持する
       }
+      trackEvent("favorite_change", {
+        university: name,
+        action: isRemoving ? "remove" : "add",
+        favorites_count: next.length,
+      });
       return next;
     });
+  };
+
+  const openUniversityDetail = (university: University) => {
+    trackEvent("university_detail_view", {
+      university: university.name,
+      area: university.area,
+      university_type: university.type,
+    });
+    setSelected(university);
   };
 
   return (
@@ -393,7 +434,7 @@ export default function Home() {
                   {examData[u.name].latter && <dl><dt>後期</dt><dd>共テ {examData[u.name].latterCommon}<span>／</span>個別 {examData[u.name].latterSecond}</dd></dl>}
                 </div>
               </div>
-              <button className="detail-button" onClick={() => setSelected(u)}>詳しく見る <span>→</span></button>
+              <button className="detail-button" onClick={() => openUniversityDetail(u)}>詳しく見る <span>→</span></button>
             </article>
           ))}
         </div>
@@ -419,7 +460,17 @@ export default function Home() {
           <p>カードの「比較に追加」を選ぶと、学びと入試の特徴を同じ軸で確認できます。「気になる」への保存とは別の機能です。</p>
         </div>
         {compared.length === 0 ? (
-          <div className="empty-compare">上の大学カードで「比較に追加」を選択してください（2校まで）。</div>
+          <div className="empty-compare">
+            <span
+              className="yoshi-pose yoshi-pose-pointing"
+              style={{ backgroundImage: `url(${import.meta.env.BASE_URL}yoshi-poses.png)` }}
+              aria-hidden="true"
+            />
+            <div>
+              <b>比べたい大学、上で選んでみよう。</b>
+              <p>上の大学カードで「比較に追加」を選択してください（2校まで）。</p>
+            </div>
+          </div>
         ) : (
           <div className="comparison-table">
             <div className="comparison-labels"><b>比較項目</b><span>一般選抜</span><span>前期 共テ / 二次</span><span>後期 共テ / 個別</span><span>個別試験科目</span><span>推薦・総合型</span><span>学びの特徴</span></div>
@@ -483,7 +534,16 @@ export default function Home() {
                 {examData[selected.name].latter && <div className="exam-schedule-row latter-row"><dt>後期</dt><dd><b>共テ {examData[selected.name].latterCommon} ／ 個別 {examData[selected.name].latterSecond}</b><small>{examData[selected.name].latterSubjects}</small></dd></div>}
                 <div><dt>推薦・総合型</dt><dd>{examData[selected.name].recommendation}</dd></div>
               </dl>
-              <a className="source-link official-source" href={examData[selected.name].source} target="_blank" rel="noreferrer"><span>公式</span> 大学公式の入試情報・募集要項を見る ↗</a>
+              <a
+                className="source-link official-source"
+                href={examData[selected.name].source}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => trackEvent("official_link_click", {
+                  university: selected.name,
+                  link_type: "admissions",
+                })}
+              ><span>公式</span> 大学公式の入試情報・募集要項を見る ↗</a>
             </div>
             <div className="modal-block accent"><h3>こんな生徒に向く</h3><p>{selected.fit}</p></div>
             {studentRealities[selected.name]?.length > 0 && (
@@ -493,12 +553,30 @@ export default function Home() {
                     <p className="reality-kicker">REAL CAMPUS LIFE</p>
                     <h3 id="reality-title">先に言ってよ、大学さん。</h3>
                   </div>
+                  <span
+                    className="yoshi-pose yoshi-pose-thinking"
+                    style={{ backgroundImage: `url(${import.meta.env.BASE_URL}yoshi-poses.png)` }}
+                    aria-hidden="true"
+                  />
                   <span>{studentRealities[selected.name].length}件</span>
                 </div>
                 <p className="reality-intro">入試情報だけでは見えにくい、入学後の「地味に困る」を先回り。大学を否定する情報ではなく、知っていれば対策できる生活メモです。</p>
                 <div className="reality-list">
                   {studentRealities[selected.name].map((item, index) => (
-                    <details className="reality-card" key={`${item.tag}-${index}`} open={index === 0}>
+                    <details
+                      className="reality-card"
+                      key={`${item.tag}-${index}`}
+                      open={index === 0}
+                      onToggle={(event) => {
+                        if (event.currentTarget.open) {
+                          trackEvent("campus_reality_open", {
+                            university: selected.name,
+                            reality_tag: item.tag,
+                            reality_position: index + 1,
+                          });
+                        }
+                      }}
+                    >
                       <summary>
                         <span className="reality-tag">{item.tag}</span>
                         <b>{item.trouble}</b>
@@ -511,7 +589,15 @@ export default function Home() {
                           <div><dt>② 学生生活への影響</dt><dd>{item.impact}</dd></div>
                           <div><dt>③ 現実的な対策</dt><dd>{item.solution}</dd></div>
                         </dl>
-                        <a href={item.sourceUrl} target="_blank" rel="noreferrer">根拠にした公開情報：{item.sourceLabel} ↗</a>
+                        <a
+                          href={item.sourceUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={() => trackEvent("official_link_click", {
+                            university: selected.name,
+                            link_type: "campus_reality_source",
+                          })}
+                        >根拠にした公開情報：{item.sourceLabel} ↗</a>
                       </div>
                     </details>
                   ))}
@@ -520,7 +606,16 @@ export default function Home() {
               </section>
             )}
             <div className="official-links">
-              <a className="official-link" href={selected.source} target="_blank" rel="noreferrer">大学・医学部公式サイト ↗</a>
+              <a
+                className="official-link"
+                href={selected.source}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => trackEvent("official_link_click", {
+                  university: selected.name,
+                  link_type: "university",
+                })}
+              >大学・医学部公式サイト ↗</a>
               <small>入試情報は上の公式募集要項で最終確認してください。</small>
             </div>
           </section>
