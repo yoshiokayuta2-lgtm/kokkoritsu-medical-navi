@@ -548,6 +548,22 @@ export default function Home() {
             <p className="column-article-kicker">YOSHI’S MEDICAL COLUMN</p>
             <h2 id="column-title">{selectedColumn.title}</h2>
             <p className="column-article-lead">{selectedColumn.lead}</p>
+            <div className="column-article-visual">
+              <span
+                className="column-hero-yoshi"
+                aria-hidden="true"
+                style={{
+                  backgroundImage: `url(${import.meta.env.BASE_URL}yoshi-poses-transparent.png)`,
+                  backgroundPosition: selectedColumn.posePosition,
+                }}
+              />
+              <div>
+                <b>この記事でわかること</b>
+                <ol>
+                  {selectedColumn.sections.map((section) => <li key={section.heading}>{section.heading}</li>)}
+                </ol>
+              </div>
+            </div>
             <blockquote><b>Yoshi</b>「{selectedColumn.yoshi}」</blockquote>
             <div className="column-article-body">
               {selectedColumn.sections.map((section, index) => (
