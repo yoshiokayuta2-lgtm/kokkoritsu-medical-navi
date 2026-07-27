@@ -549,13 +549,11 @@ export default function Home() {
             <h2 id="column-title">{selectedColumn.title}</h2>
             <p className="column-article-lead">{selectedColumn.lead}</p>
             <div className="column-article-visual">
-              <span
+              <img
                 className="column-hero-yoshi"
+                src={`${import.meta.env.BASE_URL}${selectedColumn.poseImage}`}
+                alt=""
                 aria-hidden="true"
-                style={{
-                  backgroundImage: `url(${import.meta.env.BASE_URL}yoshi-poses-transparent.png)`,
-                  backgroundPosition: selectedColumn.posePosition,
-                }}
               />
               <div>
                 <b>この記事でわかること</b>

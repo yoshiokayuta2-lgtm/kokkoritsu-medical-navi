@@ -17,7 +17,7 @@ export type MedicalColumn = {
   lead: string;
   readTime: string;
   yoshi: string;
-  posePosition: string;
+  poseImage: string;
   sections: MedicalColumnSection[];
   takeaway: string;
 };
@@ -31,7 +31,7 @@ export const medicalColumns: MedicalColumn[] = [
     lead: "「医学部だから生物」「数学が得意だから物理」だけでは決められません。入試科目、問題との相性、完成までの時間を並べて考えます。",
     readTime: "5分",
     yoshi: "好き嫌いだけでなく、“高3で得点源になるか”まで想像しよう。",
-    posePosition: "50% 0%",
+    poseImage: "yoshi-thinking.png",
     sections: [
       {
         heading: "最初に確認するのは、志望大学の受験科目",
@@ -75,7 +75,7 @@ export const medicalColumns: MedicalColumn[] = [
     lead: "英数理に時間がかかる医学部受験だからこそ、社会は“短時間で安定して取れる科目”を現実的に選びます。",
     readTime: "5分",
     yoshi: "暗記量だけで決めると危ない。共通テストは資料を読ませにくる。",
-    posePosition: "25% 0%",
+    poseImage: "yoshi-reading.png",
     sections: [
       {
         heading: "まず、志望大学で使える科目を確認する",
@@ -119,7 +119,7 @@ export const medicalColumns: MedicalColumn[] = [
     lead: "20倍と聞いて諦めるのはまだ早い。前期合格による欠席、後期が中心の医学科、試験方式との相性まで見れば、最後まで戦う道は残っています。",
     readTime: "8分",
     yoshi: "20倍と聞いて帰るのはまだ早い。当日、20人全員は来ない。",
-    posePosition: "75% 100%",
+    poseImage: "yoshi-running.png",
     sections: [
       {
         heading: "志願倍率だけを見ると、後期は怖すぎる",
@@ -177,7 +177,7 @@ export const medicalColumns: MedicalColumn[] = [
     lead: "出願できる点数と、合格に近づく点数は違います。医学部受験では二次対策と共通テスト対策の切り替え方が重要です。",
     readTime: "6分",
     yoshi: "足切りを超える勉強と、合格する勉強は別もの。",
-    posePosition: "0% 100%",
+    poseImage: "yoshi-laptop.png",
     sections: [
       {
         heading: "共通テストは「出願資格を得る試験」だけではない",
