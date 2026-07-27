@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { studentRealities } from "./studentRealities";
+import { medicalColumns, type MedicalColumn } from "./medicalColumns";
 
 type Axis = "研究" | "臨床" | "地域医療" | "国際性";
 type ExamFilter = "すべて" | "後期あり" | "推薦・総合型あり";
@@ -216,6 +217,7 @@ export default function Home() {
   const [selected, setSelected] = useState<University | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [selectedColumn, setSelectedColumn] = useState<MedicalColumn | null>(null);
 
   useEffect(() => {
     let saved: unknown = [];
@@ -291,6 +293,15 @@ export default function Home() {
     setSelected(university);
   };
 
+  const openColumn = (column: MedicalColumn) => {
+    trackEvent("medical_column_view", {
+      column_slug: column.slug,
+      grade: column.grade,
+      category: column.category,
+    });
+    setSelectedColumn(column);
+  };
+
   return (
     <main>
       <header className="site-header">
@@ -302,6 +313,7 @@ export default function Home() {
           <a href="#universities">大学を探す</a>
           <a href="#admissions">入試情報</a>
           <a href="#compare">比較する</a>
+          <a href="#columns">進路コラム</a>
           <a href="#universities" onClick={() => setShowFavoritesOnly(true)}>気になる大学 {favorites.length > 0 && <b>{favorites.length}</b>}</a>
           <a href="#guide">選び方ガイド</a>
         </nav>
@@ -330,6 +342,31 @@ export default function Home() {
             <strong>Yoshi <small>ヨッシー</small></strong>
             <p>大学選びの、見えにくい違いを整理します。</p>
           </div>
+        </div>
+      </section>
+
+      <section className="column-section" id="columns">
+        <div className="column-heading">
+          <div>
+            <p className="eyebrow">FOR FUTURE DOCTORS</p>
+            <h2>医学部志望のための進路コラム</h2>
+          </div>
+          <p>受験科目の選び方から出願戦略まで。<br />「それ、先に知りたかった」をYoshiと整理します。</p>
+        </div>
+        <div className="column-grid">
+          {medicalColumns.map((column, index) => (
+            <article className="column-card" key={column.slug}>
+              <div className="column-card-meta">
+                <span>{column.grade}</span>
+                <b>{column.category}</b>
+                <small>{column.readTime}で読む</small>
+              </div>
+              <p className="column-number">{String(index + 1).padStart(2, "0")}</p>
+              <h3>{column.title}</h3>
+              <p>{column.lead}</p>
+              <button onClick={() => openColumn(column)}>コラムを読む <span>→</span></button>
+            </article>
+          ))}
         </div>
       </section>
 
@@ -498,6 +535,55 @@ export default function Home() {
 
       {comparison.length > 0 && <a className="compare-dock" href="#compare"><b>{comparison.length}</b>校を比較する <span>→</span></a>}
       {favorites.length > 0 && <a className="favorite-dock" href="#universities" onClick={() => setShowFavoritesOnly(true)}><span>♥</span><b>{favorites.length}</b>校を保存中</a>}
+
+      {selectedColumn && (
+        <div className="modal-backdrop" onMouseDown={() => setSelectedColumn(null)}>
+          <article className="column-modal" role="dialog" aria-modal="true" aria-labelledby="column-title" onMouseDown={(e) => e.stopPropagation()}>
+            <button className="modal-close" aria-label="閉じる" onClick={() => setSelectedColumn(null)}>×</button>
+            <div className="column-article-meta">
+              <span>{selectedColumn.grade}</span>
+              <b>{selectedColumn.category}</b>
+              <small>{selectedColumn.readTime}で読む</small>
+            </div>
+            <p className="column-article-kicker">YOSHI’S MEDICAL COLUMN</p>
+            <h2 id="column-title">{selectedColumn.title}</h2>
+            <p className="column-article-lead">{selectedColumn.lead}</p>
+            <blockquote><b>Yoshi</b>「{selectedColumn.yoshi}」</blockquote>
+            <div className="column-article-body">
+              {selectedColumn.sections.map((section, index) => (
+                <section key={section.heading}>
+                  <p className="column-section-number">{String(index + 1).padStart(2, "0")}</p>
+                  <h3>{section.heading}</h3>
+                  {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                  {section.points && <ul>{section.points.map((point) => <li key={point}>{point}</li>)}</ul>}
+                  {section.table && (
+                    <div className="column-data-table">
+                      <div className="column-data-scroll">
+                        <table>
+                          <thead><tr>{section.table.headers.map((header) => <th key={header}>{header}</th>)}</tr></thead>
+                          <tbody>{section.table.rows.map((row) => <tr key={row.join("-")}>{row.map((cell, cellIndex) => <td key={`${cell}-${cellIndex}`}>{cell}</td>)}</tr>)}</tbody>
+                        </table>
+                      </div>
+                      {section.table.note && <small>{section.table.note}</small>}
+                    </div>
+                  )}
+                </section>
+              ))}
+            </div>
+            <div className="column-takeaway"><span>結論</span><p>{selectedColumn.takeaway}</p></div>
+            <p className="column-disclaimer">※ 入試科目・配点・日程は変更される場合があります。出願時は必ず各大学の最新募集要項を確認してください。</p>
+            <button
+              className="back-to-top"
+              onClick={() => {
+                setSelectedColumn(null);
+                window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+              }}
+            >
+              ↑ TOPに戻る
+            </button>
+          </article>
+        </div>
+      )}
 
       {selected && (
         <div className="modal-backdrop" onMouseDown={() => setSelected(null)}>
