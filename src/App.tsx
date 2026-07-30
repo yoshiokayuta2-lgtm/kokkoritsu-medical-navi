@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { studentRealities } from "./studentRealities";
 import { medicalColumns, type MedicalColumn } from "./medicalColumns";
 
@@ -218,6 +218,7 @@ export default function Home() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [selectedColumn, setSelectedColumn] = useState<MedicalColumn | null>(null);
+  const columnScroller = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let saved: unknown = [];
@@ -302,6 +303,19 @@ export default function Home() {
     setSelectedColumn(column);
   };
 
+  const scrollColumns = (direction: -1 | 1) => {
+    columnScroller.current?.scrollBy({
+      left: direction * Math.min(columnScroller.current.clientWidth * 0.82, 430),
+      behavior: "smooth",
+    });
+  };
+
+  const returnToTop = () => {
+    setSelectedColumn(null);
+    setSelected(null);
+    window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+  };
+
   return (
     <main>
       <header className="site-header">
@@ -353,7 +367,12 @@ export default function Home() {
           </div>
           <p>受験科目の選び方から出願戦略まで。<br />「それ、先に知りたかった」をYoshiと整理します。</p>
         </div>
-        <div className="column-grid">
+        <div className="column-scroll-controls" aria-label="コラムを横に移動">
+          <span>横にスライドして記事を探す</span>
+          <button type="button" onClick={() => scrollColumns(-1)} aria-label="前のコラム">←</button>
+          <button type="button" onClick={() => scrollColumns(1)} aria-label="次のコラム">→</button>
+        </div>
+        <div className="column-grid" ref={columnScroller}>
           {medicalColumns.map((column, index) => (
             <article className="column-card" key={column.slug}>
               <div className="column-card-meta">
@@ -535,6 +554,9 @@ export default function Home() {
 
       {comparison.length > 0 && <a className="compare-dock" href="#compare"><b>{comparison.length}</b>校を比較する <span>→</span></a>}
       {favorites.length > 0 && <a className="favorite-dock" href="#universities" onClick={() => setShowFavoritesOnly(true)}><span>♥</span><b>{favorites.length}</b>校を保存中</a>}
+      <button className="floating-top" type="button" onClick={returnToTop} aria-label="ページの先頭へ戻る">
+        <span>↑</span> TOP
+      </button>
 
       {selectedColumn && (
         <div className="modal-backdrop" onMouseDown={() => setSelectedColumn(null)}>
@@ -588,10 +610,7 @@ export default function Home() {
             <p className="column-disclaimer">※ 入試科目・配点・日程は変更される場合があります。出願時は必ず各大学の最新募集要項を確認してください。</p>
             <button
               className="back-to-top"
-              onClick={() => {
-                setSelectedColumn(null);
-                window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
-              }}
+              onClick={returnToTop}
             >
               ↑ TOPに戻る
             </button>
@@ -720,10 +739,7 @@ export default function Home() {
             </div>
             <button
               className="back-to-top"
-              onClick={() => {
-                setSelected(null);
-                window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
-              }}
+              onClick={returnToTop}
             >
               ↑ TOPに戻る
             </button>

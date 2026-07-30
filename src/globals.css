@@ -64,8 +64,12 @@ nav a b{margin-left:4px;padding:1px 5px;color:#fff;background:var(--red);border-
 .column-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:40px;align-items:end;margin-bottom:30px}
 .column-heading h2{margin:0;color:var(--navy);font-size:clamp(32px,4vw,48px);letter-spacing:-.045em}
 .column-heading>p{margin:0;color:var(--muted);font-size:12px;line-height:1.8}
-.column-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:2px solid var(--navy);border-left:1px solid var(--line)}
-.column-card{min-height:315px;padding:25px;display:flex;flex-direction:column;position:relative;background:#fffdf8;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.column-scroll-controls{min-height:42px;display:flex;align-items:center;justify-content:flex-end;gap:7px}
+.column-scroll-controls span{margin-right:5px;color:var(--muted);font-size:9px;font-weight:700}
+.column-scroll-controls button{width:34px;height:34px;color:var(--navy);background:#fff;border:1px solid var(--line-dark);cursor:pointer;font-size:15px}
+.column-scroll-controls button:hover{color:#fff;background:var(--navy)}
+.column-grid{display:flex;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:var(--navy) #ece9df;border-top:2px solid var(--navy);border-left:1px solid var(--line)}
+.column-card{min-height:315px;padding:25px;display:flex;flex:0 0 clamp(290px,31vw,390px);flex-direction:column;position:relative;background:#fffdf8;border-right:1px solid var(--line);border-bottom:1px solid var(--line);scroll-snap-align:start}
 .column-card:first-child{background:#fff8dc}
 .column-card-meta{display:flex;align-items:center;gap:7px}
 .column-card-meta span,.column-article-meta span{padding:4px 8px;color:#fff;background:var(--blue);font-size:9px;font-weight:900}
@@ -227,6 +231,9 @@ footer img{width:105px}
 .official-links small{color:var(--muted);font-size:9px;line-height:1.5;text-align:right}
 .back-to-top{width:100%;margin-top:22px;padding:13px 16px;color:#fff;background:var(--navy);border:0;font-size:11px;font-weight:900;letter-spacing:.04em;cursor:pointer}
 .back-to-top:hover{background:#3559d8}
+.floating-top{position:fixed;right:22px;bottom:76px;z-index:70;width:54px;height:54px;display:grid;place-content:center;gap:1px;color:#fff;background:var(--navy);border:1px solid rgba(255,255,255,.35);box-shadow:0 8px 24px rgba(18,38,58,.22);cursor:pointer;font-size:8px;font-weight:900;letter-spacing:.08em}
+.floating-top span{font-size:17px;line-height:1}
+.floating-top:hover{background:#3559d8}
 .column-article-meta{display:flex;align-items:center;gap:8px;padding-right:45px}
 .column-article-kicker{margin:25px 0 8px;color:var(--blue);font-size:9px;font-weight:900;letter-spacing:.17em}
 .column-modal>h2{max-width:650px;margin:0;color:var(--navy);font-size:clamp(29px,4.5vw,44px);line-height:1.3;letter-spacing:-.045em}
@@ -287,7 +294,6 @@ footer img{width:105px}
 @media(max-width:1000px){
   .hero{grid-template-columns:1fr;gap:55px;background:#fff}
   .medical-visual{max-width:650px;width:100%}
-  .column-grid{grid-template-columns:1fr}
   .column-card{min-height:250px}
   .finder-header{grid-template-columns:1fr}
   .filter-panel{grid-template-columns:1fr;gap:10px}
@@ -413,9 +419,14 @@ footer{padding-block:38px;grid-template-columns:1fr;color:#615b51;background:#ff
   .yoshi-caption{left:50%;bottom:6%;width:230px;padding:11px 14px}
   .university-grid{gap:11px}
 }
+
+@media(max-width:700px){
   .column-section{padding:61px 20px 66px}
   .column-heading{grid-template-columns:1fr;gap:16px}.column-heading h2{font-size:32px}.column-heading>p br{display:none}
-  .column-card{min-height:280px;padding:22px 19px}
+  .column-scroll-controls{justify-content:space-between}
+  .column-scroll-controls span{font-size:8px}
+  .column-card{min-height:280px;padding:22px 19px;flex-basis:min(84vw,340px)}
+  .floating-top{right:14px;bottom:72px;width:48px;height:48px}
   .column-modal{padding:37px 22px 28px}
   .column-modal>h2{font-size:29px}
   .column-article-visual{min-height:164px;padding:14px 14px 0;grid-template-columns:88px 1fr;gap:13px}
@@ -423,3 +434,4 @@ footer{padding-block:38px;grid-template-columns:1fr;color:#615b51;background:#ff
   .column-article-visual b{font-size:12px}
   .column-article-visual li{padding:5px 0 5px 25px;font-size:9px}
   .column-takeaway{grid-template-columns:1fr;gap:7px}
+}
