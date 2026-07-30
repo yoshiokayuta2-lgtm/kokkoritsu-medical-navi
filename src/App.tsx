@@ -218,6 +218,7 @@ export default function Home() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [selectedColumn, setSelectedColumn] = useState<MedicalColumn | null>(null);
+  const [columnAutoPaused, setColumnAutoPaused] = useState(false);
   const columnScroller = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -232,6 +233,20 @@ export default function Home() {
     }, 0);
     return () => window.clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (columnAutoPaused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => {
+      const scroller = columnScroller.current;
+      if (!scroller) return;
+      const reachedEnd = scroller.scrollLeft + scroller.clientWidth >= scroller.scrollWidth - 24;
+      scroller.scrollTo({
+        left: reachedEnd ? 0 : scroller.scrollLeft + Math.min(scroller.clientWidth * 0.82, 430),
+        behavior: "smooth",
+      });
+    }, 5500);
+    return () => window.clearInterval(timer);
+  }, [columnAutoPaused]);
 
   const filtered = useMemo(() => universities.filter((u) => {
     const matchesQuery = `${u.name}${u.area}${u.catchcopy}${u.tags.join("")}`.includes(query.trim());
@@ -372,7 +387,19 @@ export default function Home() {
           <button type="button" onClick={() => scrollColumns(-1)} aria-label="前のコラム">←</button>
           <button type="button" onClick={() => scrollColumns(1)} aria-label="次のコラム">→</button>
         </div>
-        <div className="column-grid" ref={columnScroller}>
+        <div
+          className="column-grid"
+          ref={columnScroller}
+          onMouseEnter={() => setColumnAutoPaused(true)}
+          onMouseLeave={() => setColumnAutoPaused(false)}
+          onFocus={() => setColumnAutoPaused(true)}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) setColumnAutoPaused(false);
+          }}
+          onTouchStart={() => setColumnAutoPaused(true)}
+          onTouchEnd={() => window.setTimeout(() => setColumnAutoPaused(false), 1800)}
+          aria-label="医学部志望向け進路コラム"
+        >
           {medicalColumns.map((column, index) => (
             <article className="column-card" key={column.slug}>
               <div className="column-card-meta">
