@@ -555,9 +555,22 @@ export default function Home() {
             </div>
           </div>
         ) : (
-          <div className="comparison-table">
+          <div className={`comparison-table comparison-count-${compared.length}`}>
             <div className="comparison-labels"><b>比較項目</b><span>一般選抜</span><span>前期 共テ / 二次</span><span>後期 共テ / 個別</span><span>個別試験科目</span><span>推薦・総合型</span><span>学びの特徴</span></div>
-            {compared.map((u) => { const exam = examData[u.name]; return <div className="comparison-column" key={u.name}><b>{u.name}</b><span>{exam.general}</span><span>{exam.front ? `${exam.common} / ${exam.second}` : "実施なし"}</span><span>{exam.latter ? `${exam.latterCommon} / ${exam.latterSecond}` : "実施なし"}</span><p>{exam.front ? `前期：${exam.subjects}` : "前期：実施なし"}{exam.latter && <><br />後期：{exam.latterSubjects}</>}</p><p>{exam.recommendation}</p><p>{axes.map((axis) => `${axis}${u.scores[axis]}`).join("　")}</p></div>})}
+            {compared.map((u) => {
+              const exam = examData[u.name];
+              return (
+                <div className="comparison-column" key={u.name}>
+                  <b>{u.name}</b>
+                  <span data-label="一般選抜">{exam.general}</span>
+                  <span data-label="前期 配点">{exam.front ? `共テ ${exam.common} ／ 二次 ${exam.second}` : "実施なし"}</span>
+                  <span data-label="後期 配点">{exam.latter ? `共テ ${exam.latterCommon} ／ 個別 ${exam.latterSecond}` : "実施なし"}</span>
+                  <p data-label="個別試験">{exam.front ? `前期：${exam.subjects}` : "前期：実施なし"}{exam.latter && <><br />後期：{exam.latterSubjects}</>}</p>
+                  <p data-label="推薦等">{exam.recommendation}</p>
+                  <p data-label="学び">{axes.map((axis) => `${axis} ${u.scores[axis]}`).join("　")}</p>
+                </div>
+              );
+            })}
           </div>
         )}
       </section>
