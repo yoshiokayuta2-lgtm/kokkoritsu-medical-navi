@@ -561,7 +561,12 @@ export default function Home() {
               const exam = examData[u.name];
               return (
                 <div className="comparison-column" key={u.name}>
-                  <b>{u.name}</b>
+                  <div className="comparison-university-header">
+                    <b>{u.name}</b>
+                    <button type="button" onClick={() => toggleCompare(u.name)} aria-label={`${u.name}を比較から外す`}>
+                      <span aria-hidden="true">×</span> 比較から外す
+                    </button>
+                  </div>
                   <span data-label="一般選抜">{exam.general}</span>
                   <span data-label="前期 配点">{exam.front ? `共テ ${exam.common} ／ 二次 ${exam.second}` : "実施なし"}</span>
                   <span data-label="後期 配点">{exam.latter ? `共テ ${exam.latterCommon} ／ 個別 ${exam.latterSecond}` : "実施なし"}</span>
@@ -571,6 +576,10 @@ export default function Home() {
                 </div>
               );
             })}
+            <div className="comparison-actions">
+              <a href="#universities">大学を選び直す</a>
+              <button type="button" onClick={() => setComparison([])}>比較をすべて解除</button>
+            </div>
           </div>
         )}
       </section>

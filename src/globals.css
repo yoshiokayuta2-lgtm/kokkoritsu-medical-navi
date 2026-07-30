@@ -172,8 +172,17 @@ nav a b{margin-left:4px;padding:1px 5px;color:#fff;background:var(--red);border-
 .comparison-labels{color:var(--muted);background:var(--paper);font-size:11px}
 .comparison-labels b{color:var(--navy)}
 .comparison-column b{color:var(--navy);font-size:17px}
+.comparison-university-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.comparison-university-header b{min-width:0;padding:0;border:0}
+.comparison-university-header button{flex:0 0 auto;padding:6px 8px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:999px;font-size:8px;font-weight:800;cursor:pointer}
+.comparison-university-header button:hover{color:#fff;background:var(--navy);border-color:var(--navy)}
+.comparison-university-header button span{margin-right:2px;font-size:12px;line-height:1}
 .comparison-column span{color:var(--teal);font-size:12px;font-weight:800}
 .comparison-column p{color:var(--muted);font-size:11px;line-height:1.65}
+.comparison-actions{grid-column:1/-1;padding:14px 0 0;display:flex;justify-content:flex-end;gap:9px}
+.comparison-actions a,.comparison-actions button{padding:10px 14px;border-radius:999px;font-size:10px;font-weight:800;cursor:pointer}
+.comparison-actions a{color:var(--navy);background:#fff;border:1px solid var(--line-dark)}
+.comparison-actions button{color:#fff;background:var(--navy);border:1px solid var(--navy)}
 
 .guide{background:#f2f3f1}
 .guide-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:2px solid var(--navy);border-left:1px solid var(--line)}
@@ -332,11 +341,15 @@ footer img{width:105px}
   .comparison-labels{display:none}
   .comparison-column{display:block;border:1px solid #d7d0c2;border-top:4px solid var(--blue);border-radius:14px;overflow:hidden;background:#fffdf8;box-shadow:0 6px 0 rgba(23,32,49,.05)}
   .comparison-column>*{min-height:0;margin:0;padding:11px 12px;border:0;border-bottom:1px solid var(--line)}
-  .comparison-column>b{display:block;padding:15px 14px;color:var(--navy);background:#f4f0e5;font-size:19px;line-height:1.35}
+  .comparison-university-header{min-height:58px;padding:11px 12px;background:#f4f0e5}
+  .comparison-university-header b{font-size:18px;line-height:1.35;overflow-wrap:anywhere}
+  .comparison-university-header button{min-height:36px;padding:7px 10px;background:#fffdf8;font-size:9px}
   .comparison-column>[data-label]{display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px;align-items:start;color:var(--muted);font-size:11px;line-height:1.65;overflow-wrap:anywhere}
   .comparison-column>[data-label]::before{content:attr(data-label);color:var(--navy);font-size:10px;font-weight:900;line-height:1.65}
   .comparison-column>span[data-label]{color:var(--teal);font-size:11px;font-weight:800}
   .comparison-column>*:last-child{border-bottom:0}
+  .comparison-actions{padding:2px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .comparison-actions a,.comparison-actions button{min-height:42px;padding:10px 8px;display:grid;place-items:center;text-align:center;font-size:9px}
   .guide-grid{grid-template-columns:1fr}
   footer{grid-template-columns:1fr}.footer-note{grid-column:1}
   .modal-backdrop{padding:0;place-items:stretch}
