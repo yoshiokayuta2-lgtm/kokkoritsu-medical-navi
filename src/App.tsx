@@ -634,6 +634,18 @@ export default function Home() {
               ))}
             </div>
             <div className="column-takeaway"><span>結論</span><p>{selectedColumn.takeaway}</p></div>
+            {selectedColumn.sources && (
+              <div className="column-sources">
+                <b>大学公式の確認資料</b>
+                <div>
+                  {selectedColumn.sources.map((source) => (
+                    <a key={source.url} href={source.url} target="_blank" rel="noreferrer">
+                      {source.label} <span>↗</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
             <p className="column-disclaimer">※ 入試科目・配点・日程は変更される場合があります。出願時は必ず各大学の最新募集要項を確認してください。</p>
             <button
               className="back-to-top"
