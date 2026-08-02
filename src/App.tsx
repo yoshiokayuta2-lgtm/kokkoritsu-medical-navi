@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import { studentRealities } from "./studentRealities";
 import { medicalColumns, type MedicalColumn } from "./medicalColumns";
 
@@ -202,6 +202,23 @@ const trackEvent = (eventName: string, params: AnalyticsParams = {}) => {
     gtag?: (command: "event", name: string, parameters?: AnalyticsParams) => void;
   };
   analyticsWindow.gtag?.("event", eventName, params);
+};
+
+const openExternalLink = (
+  event: MouseEvent<HTMLAnchorElement>,
+  url: string,
+  university: string,
+  linkType: string,
+) => {
+  event.preventDefault();
+  event.stopPropagation();
+  trackEvent("official_link_click", { university, link_type: linkType });
+  const opened = window.open(url, "_blank");
+  if (opened) {
+    opened.opener = null;
+  } else {
+    window.location.assign(url);
+  }
 };
 
 export default function Home() {
@@ -658,7 +675,7 @@ export default function Home() {
                 <b>大学公式の確認資料</b>
                 <div>
                   {selectedColumn.sources.map((source) => (
-                    <a key={source.url} href={source.url} target="_blank" rel="noreferrer">
+                    <a key={source.url} href={source.url} target="_blank" rel="noreferrer" onClick={(event) => openExternalLink(event, source.url, "コラム", "column_source")}>
                       {source.label} <span>↗</span>
                     </a>
                   ))}
@@ -716,10 +733,7 @@ export default function Home() {
                 href={examData[selected.name].source}
                 target="_blank"
                 rel="noreferrer"
-                onClick={() => trackEvent("official_link_click", {
-                  university: selected.name,
-                  link_type: "admissions",
-                })}
+                onClick={(event) => openExternalLink(event, examData[selected.name].source, selected.name, "admissions")}
               ><span>公式</span> 大学公式の入試情報・募集要項を見る ↗</a>
             </div>
             <div className="modal-block accent"><h3>こんな生徒に向く</h3><p>{selected.fit}</p></div>
@@ -770,10 +784,7 @@ export default function Home() {
                           href={item.sourceUrl}
                           target="_blank"
                           rel="noreferrer"
-                          onClick={() => trackEvent("official_link_click", {
-                            university: selected.name,
-                            link_type: "campus_reality_source",
-                          })}
+                          onClick={(event) => openExternalLink(event, item.sourceUrl, selected.name, "campus_reality_source")}
                         >根拠にした公開情報：{item.sourceLabel} ↗</a>
                       </div>
                     </details>
@@ -788,10 +799,7 @@ export default function Home() {
                 href={selected.source}
                 target="_blank"
                 rel="noreferrer"
-                onClick={() => trackEvent("official_link_click", {
-                  university: selected.name,
-                  link_type: "university",
-                })}
+                onClick={(event) => openExternalLink(event, selected.source, selected.name, "university")}
               >大学・医学部公式サイト ↗</a>
               <small>入試情報は上の公式募集要項で最終確認してください。</small>
             </div>
