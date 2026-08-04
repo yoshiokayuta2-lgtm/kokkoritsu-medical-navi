@@ -4,6 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { studentRealities } from "./studentRealities";
 import { medicalColumns, type MedicalColumn } from "./medicalColumns";
 
+const TEACHER_NAVI_URL = "https://yoshiokayuta2-lgtm.github.io/teacher-license-navi/?utm_source=kokkoritsu-medical-navi&utm_medium=referral&utm_campaign=yoshi_series";
+const INSTAGRAM_URL = "https://www.instagram.com/yoshi.daigaku_navi/";
+
 type Axis = "研究" | "臨床" | "地域医療" | "国際性";
 type ExamFilter = "すべて" | "後期あり" | "推薦・総合型あり";
 type ExamInfo = {
@@ -318,9 +321,9 @@ export default function Home() {
           <span className="brand-sign">Yoshi</span>
           <span className="brand-copy"><small>偏差値だけではわからない</small>医学部編</span>
         </a>
-        <a className="mobile-series-link" href="https://yoshiokayuta2-lgtm.github.io/teacher-license-navi/">教育編 ↗</a>
+        <a className="mobile-series-link" href={TEACHER_NAVI_URL} onClick={() => trackEvent("series_navigation", { destination: "teacher_license_navi", placement: "header_mobile" })}>次のナビ｜教員免許 →</a>
         <nav aria-label="メインナビゲーション">
-          <a className="series-nav-link" href="https://yoshiokayuta2-lgtm.github.io/teacher-license-navi/">教育・教員免許編 ↗</a>
+          <a className="series-nav-link" href={TEACHER_NAVI_URL} onClick={() => trackEvent("series_navigation", { destination: "teacher_license_navi", placement: "header" })}><small>SERIES 02</small>教員免許ナビへ →</a>
           <a href="#universities">大学を探す</a>
           <a href="#admissions">入試情報</a>
           <a href="#compare">比較する</a>
@@ -578,9 +581,28 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="next-series" aria-labelledby="next-series-title">
+        <div className="next-series-copy">
+          <p className="eyebrow">NEXT｜YOSHI&apos;S GUIDE SERIES</p>
+          <h2 id="next-series-title">教育学部だけじゃない。<br />取りたい免許から大学を探そう。</h2>
+          <p>小学校・中学校・高校・特別支援など、取得したい教員免許と教科から大学を検索できます。</p>
+        </div>
+        <a className="next-series-card" href={TEACHER_NAVI_URL} onClick={() => trackEvent("series_navigation", { destination: "teacher_license_navi", placement: "large_card" })}>
+          <small>SERIES 02</small>
+          <strong>教員免許ナビ</strong>
+          <span>免許・教科・地域から探す　→</span>
+        </a>
+      </section>
+
+      <aside className="instagram-banner" aria-label="Instagramのご案内">
+        <div className="instagram-mark" aria-hidden="true">◎</div>
+        <div><small>INSTAGRAM</small><b>大学選びのヒントを発信中</b><p>@yoshi.daigaku_navi</p></div>
+        <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" onClick={() => trackEvent("instagram_click", { placement: "footer_banner" })}>Instagramをフォロー ↗</a>
+      </aside>
+
       <footer>
         <p className="footer-series"><b>Yoshi</b>｜偏差値だけではわからない〈医学部編〉</p>
-        <a className="footer-series-link" href="https://yoshiokayuta2-lgtm.github.io/teacher-license-navi/">教育・教員免許編を見る ↗</a>
+        <a className="footer-series-link" href={TEACHER_NAVI_URL} onClick={() => trackEvent("series_navigation", { destination: "teacher_license_navi", placement: "footer" })}>次のシリーズ｜教員免許ナビを見る →</a>
         <p className="footer-note">掲載内容は大学公式サイトをもとにした要約です。出願時は最新の募集要項・カリキュラムを必ず確認してください。</p>
       </footer>
 
