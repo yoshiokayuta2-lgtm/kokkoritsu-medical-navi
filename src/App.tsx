@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { studentRealities } from "./studentRealities";
 import { medicalColumns, type MedicalColumn } from "./medicalColumns";
 
@@ -52,38 +52,21 @@ const scoreReasons: Record<string, Record<Axis, string>> = {
   "信州大学": {研究:"研究機会はあるが、この比較では地域・臨床の特色が中心。", 臨床:"県内協力病院を使った参加型実習を重視。", 地域医療:"長野県全体を学びの場にする地域密着性が際立つ。", 国際性:"海外より県内医療ネットワークとの接続が中心。"},
 };
 
-// 配点・科目は、大学公式の当該年度募集要項で照合が完了した大学だけ数値を掲載する。
-// まとめサイトや前年度値からの推定値は公開しない。
-const underReviewExam = (
-  source: string,
-  recommendation = "選抜方式を公式要項で確認中",
-): ExamInfo => ({
-  year: "2026年度",
-  front: true,
-  latter: false,
-  common: "公式確認中",
-  second: "公式確認中",
-  subjects: "大学公式の2026年度募集要項と照合中",
-  recommendation,
-  general: "日程を含め公式要項と照合中",
-  source,
-});
-
 const featuredExamData: Record<string, ExamInfo> = {
-  "東京大学": underReviewExam("https://www.u-tokyo.ac.jp/ja/admissions/undergraduate/e01_02_01.html"),
-  "京都大学": underReviewExam("https://www.kyoto-u.ac.jp/ja/admissions/undergrad/bosyuu"),
-  "大阪大学": underReviewExam("https://www.osaka-u.ac.jp/ja/admissions/faculty/general"),
-  "東北大学": underReviewExam("https://admissions.tohoku.ac.jp/ja/entrance-info/undergraduate-info/general/"),
-  "東京科学大学": underReviewExam("https://admissions.isct.ac.jp/ja/013/undergraduate/guideline"),
-  "名古屋大学": underReviewExam("https://www.nagoya-u.ac.jp/admissions/exam/"),
-  "岐阜大学": underReviewExam("https://www.gifu-u.ac.jp/admission/f_applicant/guide.html"),
+  "東京大学": { year:"2027年度", front:true, latter:false, common:"110点", second:"440点", subjects:"国語・数学・理科2・外国語・面接", recommendation:"学校推薦型選抜あり", general:"前期のみ（理科三類）", source:"https://www.u-tokyo.ac.jp/content/400243934.pdf" },
+  "京都大学": { year:"2027年度", front:true, latter:false, common:"275点", second:"1,000点", subjects:"国語・数学・理科2・外国語・面接", recommendation:"特色入試あり", general:"前期のみ", source:"https://www.kyoto-u.ac.jp/sites/default/files/inline-files/senbatsuyokoR9_all-22d87b752c22c5b9d7bcb8ef94505625.pdf" },
+  "大阪大学": { year:"2027年度", front:true, latter:false, common:"500点", second:"1,500点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜あり", general:"前期のみ", source:"https://www.osaka-u.ac.jp/ja/admissions/faculty/general/files/R9_senbatsuyoukou.pdf/@@download/file" },
+  "東北大学": { year:"2027年度", front:true, latter:false, common:"550点", second:"850点", subjects:"数学・理科2・外国語（英語）・面接", recommendation:"AO入試Ⅱ期・Ⅲ期あり", general:"前期のみ", source:"https://admissions.tohoku.ac.jp/ja/materials/admission_requirement/" },
+  "東京科学大学": { year:"2027年度", front:true, latter:true, common:"180点", second:"540点", subjects:"数学・理科2・外国語・面接", latterCommon:"500点", latterSecond:"200点", latterSubjects:"小論文・面接", recommendation:"学校推薦型選抜・地域特別枠推薦あり", general:"前期・後期", source:"https://admissions.isct.ac.jp/ja/013/undergraduate/guideline" },
+  "名古屋大学": { year:"2027年度", front:true, latter:true, common:"950点", second:"1,800点", subjects:"数学・理科2・外国語・面接", latterCommon:"950点", latterSecond:"面接", latterSubjects:"面接", recommendation:"学校推薦型選抜あり", general:"前期・後期", source:"https://www.nagoya-u.ac.jp/admissions/exam/guidebooks/requirement/index.html" },
+  "岐阜大学": { year:"2027年度", front:true, latter:false, common:"950点", second:"1,200点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜Ⅱあり", general:"前期のみ", source:"https://www.gifu-u.ac.jp/admission/f_applicant/guide.html" },
   "三重大学": { year:"2026年度", front:true, latter:true, common:"650点", second:"700点", subjects:"数学・理科2・外国語・面接", latterCommon:"650点", latterSecond:"300点", latterSubjects:"小論文・面接", recommendation:"学校推薦型選抜あり", general:"前期・後期", source:"https://www.mie-u.ac.jp/exam/R08gakuseiboshuuyoukou.pdf" },
   "浜松医科大学": { year:"2026年度", front:true, latter:true, common:"475点", second:"700点", subjects:"数学・理科2・外国語・面接", latterCommon:"950点", latterSecond:"350点", latterSubjects:"小論文・面接", recommendation:"学校推薦型選抜あり", general:"前期・後期", source:"https://www.hama-med.ac.jp/admission/senbatsu.html" },
-  "千葉大学": underReviewExam("https://inh.m.chiba-u.jp/admissions/undergraduate/"),
-  "筑波大学": underReviewExam("https://ac.tsukuba.ac.jp/apply/application-guidelines/"),
-  "神戸大学": underReviewExam("https://www.office.kobe-u.ac.jp/stdnt-examinavi/juken/"),
-  "岡山大学": underReviewExam("https://www.okayama-u.ac.jp/tp/admission/index.html"),
-  "広島大学": underReviewExam("https://www.hiroshima-u.ac.jp/nyushi"),
+  "千葉大学": { year:"2027年度", front:true, latter:true, common:"475点", second:"1,000点", subjects:"数学・理科2・外国語・面接", latterCommon:"475点", latterSecond:"1,000点", latterSubjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜あり", general:"前期・後期", source:"https://inh.m.chiba-u.jp/admissions/undergraduate/" },
+  "筑波大学": { year:"2027年度", front:true, latter:false, common:"950点", second:"1,400点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜・総合型選抜あり", general:"前期のみ", source:"https://ac.tsukuba.ac.jp/apply/application-guidelines/" },
+  "神戸大学": { year:"2027年度", front:true, latter:false, common:"380点", second:"480点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜・総合型選抜あり", general:"前期のみ", source:"https://www.office.kobe-u.ac.jp/stdnt-examinavi/juken/" },
+  "岡山大学": { year:"2027年度", front:true, latter:false, common:"550点", second:"1,100点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜Ⅱ・国際バカロレア選抜あり", general:"前期のみ", source:"https://www.okayama-u.ac.jp/tp/admission/index.html" },
+  "広島大学": { year:"2027年度", front:true, latter:false, common:"1,000点", second:"2,000点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜Ⅱ・総合型選抜あり", general:"前期のみ", source:"https://www.hiroshima-u.ac.jp/nyushi" },
   "信州大学": { year:"2026年度", front:true, latter:false, common:"500点", second:"600点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜Ⅱあり", general:"前期のみ", source:"https://www.shinshu-u.ac.jp/faculty/medicine/medic/test/post-1.html" },
 };
 
@@ -106,40 +89,40 @@ const featuredUniversities: University[] = [
 ];
 
 const additionalExamData: Record<string, ExamInfo> = {
-  "北海道大学": underReviewExam("https://www.hokudai.ac.jp/admission/"),
-  "旭川医科大学": underReviewExam("https://www.asahikawa-med.ac.jp/admission/"),
-  "札幌医科大学": underReviewExam("https://web.sapmed.ac.jp/jp/public/exam/"),
-  "弘前大学": underReviewExam("https://nyushi.hirosaki-u.ac.jp/faculty/"),
-  "秋田大学": underReviewExam("https://www.akita-u.ac.jp/honbu/exam/"),
-  "山形大学": underReviewExam("https://www.yamagata-u.ac.jp/jp/entrance/"),
-  "福島県立医科大学": underReviewExam("https://www.fmu.ac.jp/admission/medicine/exam.html"),
-  "群馬大学": underReviewExam("https://www.gunma-u.ac.jp/admission/"),
-  "横浜市立大学": underReviewExam("https://www.yokohama-cu.ac.jp/admissions/"),
-  "新潟大学": underReviewExam("https://www.niigata-u.ac.jp/news/2025/991080/"),
-  "富山大学": underReviewExam("https://www.u-toyama.ac.jp/admission/"),
-  "金沢大学": underReviewExam("https://www.kanazawa-u.ac.jp/admission/"),
-  "福井大学": underReviewExam("https://www.u-fukui.ac.jp/user_admission/"),
-  "山梨大学": underReviewExam("https://www.yamanashi.ac.jp/admission/"),
-  "名古屋市立大学": underReviewExam("https://www.nagoya-cu.ac.jp/admissions/"),
-  "滋賀医科大学": underReviewExam("https://www.shiga-med.ac.jp/admission/undergraduate/schedule-of-examinations"),
-  "京都府立医科大学": underReviewExam("https://www.kpu-m.ac.jp/doc/examination/"),
-  "大阪公立大学": underReviewExam("https://www.omu.ac.jp/admissions/ug/exam_info/summary/"),
-  "奈良県立医科大学": underReviewExam("https://www.naramed-u.ac.jp/university/nyushijoho/"),
-  "和歌山県立医科大学": underReviewExam("https://www.wakayama-med.ac.jp/nyushi/"),
-  "鳥取大学": underReviewExam("https://www.tottori-u.ac.jp/admission/"),
-  "島根大学": underReviewExam("https://www2.med.shimane-u.ac.jp/medicine/nyushi/"),
-  "山口大学": underReviewExam("https://www.yamaguchi-u.ac.jp/nyushi/"),
-  "徳島大学": underReviewExam("https://www.tokushima-u.ac.jp/admission/docs/69867.html"),
-  "香川大学": underReviewExam("https://www.kagawa-u.ac.jp/admission/"),
+  "北海道大学": { year:"2027年度", front:true, latter:false, common:"315点", second:"525点", subjects:"数学・理科2・外国語（英語）・面接", recommendation:"フロンティア入試あり", general:"前期のみ", source:"https://www.hokudai.ac.jp/admission/R09_admission.pdf" },
+  "旭川医科大学": { year:"2027年度", front:true, latter:false, common:"470点", second:"500点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜・総合型選抜あり", general:"前期のみ", source:"https://www.asahikawa-med.ac.jp/uploads/files/admission/bureau/nyusi/contents/pdf/selection_requirement2027.pdf" },
+  "札幌医科大学": { year:"2027年度", front:true, latter:false, common:"750点", second:"800点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜あり", general:"前期のみ", source:"https://web.sapmed.ac.jp/jp/public/exam/l0re8300000000eh-att/cbv73600000004d6.pdf" },
+  "弘前大学": { year:"2027年度", front:true, latter:false, common:"1,000点", second:"600点", subjects:"数学・外国語・面接（段階評価）", recommendation:"総合型選抜Ⅱあり", general:"前期のみ", source:"https://nyushi.hirosaki-u.ac.jp/news/faculty/15397/" },
+  "秋田大学": { year:"2027年度", front:true, latter:true, common:"600点", second:"400点", subjects:"数学・外国語・面接", latterCommon:"750点", latterSecond:"300点", latterSubjects:"小論文・面接", recommendation:"学校推薦型選抜Ⅱあり", general:"前期・後期", source:"https://www.akita-u.ac.jp/honbu/exam/" },
+  "山形大学": { year:"2027年度", front:true, latter:false, common:"950点", second:"700点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜Ⅱあり", general:"前期のみ", source:"https://www.yamagata-u.ac.jp/jp/entrance/" },
+  "福島県立医科大学": { year:"2027年度", front:true, latter:false, common:"700点", second:"600点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜・総合型選抜あり", general:"前期のみ", source:"https://www.fmu.ac.jp/admission/medicine/exam.html" },
+  "群馬大学": { year:"2027年度", front:true, latter:false, common:"475点", second:"450点", subjects:"数学・物理・化学・小論文・面接", recommendation:"学校推薦型選抜Ⅱあり", general:"前期のみ", source:"https://www.gunma-u.ac.jp/admission/g2107/g30171" },
+  "横浜市立大学": { year:"2027年度", front:true, latter:false, common:"1,000点", second:"1,200点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜あり", general:"前期のみ", source:"https://www.yokohama-cu.ac.jp/admissions/" },
+  "新潟大学": { year:"2027年度", front:true, latter:false, common:"800点", second:"1,200点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜あり", general:"前期のみ", source:"https://www.niigata-u.ac.jp/admissions/faculty/general/" },
+  "富山大学": { year:"2027年度", front:true, latter:false, common:"1,000点", second:"700点", subjects:"数学・理科2・外国語・面接・調査書", recommendation:"学校推薦型選抜・総合型選抜あり", general:"前期のみ", source:"https://www.u-toyama.ac.jp/admission/undergraduate-exam/" },
+  "金沢大学": { year:"2027年度", front:true, latter:false, common:"450点", second:"1,050点", subjects:"数学・理科2・外国語・口述試験", recommendation:"KUGS特別入試（学校推薦型選抜Ⅱ）あり", general:"前期のみ", source:"https://www.kanazawa-u.ac.jp/admission/" },
+  "福井大学": { year:"2027年度", front:true, latter:true, common:"500点", second:"700点", subjects:"数学・理科2・外国語・面接", latterCommon:"500点", latterSecond:"220点", latterSubjects:"小論文・面接", recommendation:"学校推薦型選抜Ⅱあり", general:"前期・後期", source:"https://www.u-fukui.ac.jp/user_admission/" },
+  "山梨大学": { year:"2027年度", front:false, latter:true, common:"1,100点", second:"2,200点", subjects:"一般選抜は後期のみ", latterCommon:"1,100点", latterSecond:"2,200点", latterSubjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜Ⅱあり", general:"後期のみ", source:"https://www.yamanashi.ac.jp/admission/" },
+  "名古屋市立大学": { year:"2027年度", front:true, latter:false, common:"600点", second:"1,200点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜あり", general:"前期のみ", source:"https://www.nagoya-cu.ac.jp/admissions/undergraduate/" },
+  "滋賀医科大学": { year:"2027年度", front:true, latter:false, common:"650点", second:"600点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜あり", general:"前期のみ", source:"https://www.shiga-med.ac.jp/admission/undergraduate/schedule-of-examinations" },
+  "京都府立医科大学": { year:"2027年度", front:true, latter:false, common:"500点", second:"600点", subjects:"数学・理科2・外国語・小論文・面接", recommendation:"学校推薦型選抜あり", general:"前期のみ", source:"https://www.kpu-m.ac.jp/doc/examination/" },
+  "大阪公立大学": { year:"2027年度", front:true, latter:false, common:"650点", second:"1,400点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜・総合型選抜あり", general:"前期のみ", source:"https://www.omu.ac.jp/admissions/ug/exam_info/general/" },
+  "奈良県立医科大学": { year:"2026年度（前年参考）", front:true, latter:true, common:"900点", second:"100点", subjects:"小論文・面接", latterCommon:"300点", latterSecond:"900点", latterSubjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜あり", general:"前期・後期", source:"https://www.naramed-u.ac.jp/university/nyushijoho/" },
+  "和歌山県立医科大学": { year:"2027年度", front:true, latter:false, common:"600点", second:"700点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜あり", general:"前期のみ", source:"https://www.wakayama-med.ac.jp/nyushi/" },
+  "鳥取大学": { year:"2027年度", front:true, latter:false, common:"920点", second:"700点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜Ⅱあり", general:"前期のみ", source:"https://www.admissions.adm.tottori-u.ac.jp/schedule" },
+  "島根大学": { year:"2027年度", front:true, latter:false, common:"930点", second:"720点", subjects:"数学・理科1・外国語・面接", recommendation:"学校推薦型選抜Ⅱ・総合型選抜あり", general:"前期のみ", source:"https://www2.med.shimane-u.ac.jp/medicine/nyushi/" },
+  "山口大学": { year:"2027年度", front:true, latter:true, common:"950点", second:"600点", subjects:"数学・理科2・外国語・面接", latterCommon:"950点", latterSecond:"500点", latterSubjects:"小論文・面接", recommendation:"学校推薦型選抜Ⅱあり", general:"前期・後期", source:"https://www.yamaguchi-u.ac.jp/nyushi/" },
+  "徳島大学": { year:"2027年度", front:true, latter:false, common:"950点", second:"400点", subjects:"数学・外国語・面接", recommendation:"学校推薦型選抜Ⅱ・総合型選抜あり", general:"前期のみ", source:"https://www.tokushima-u.ac.jp/admission/docs/69867.html" },
+  "香川大学": { year:"2027年度", front:true, latter:false, common:"700点", second:"700点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜Ⅱあり", general:"前期のみ", source:"https://www.kagawa-u.ac.jp/admission/" },
   "愛媛大学": { year:"2026年度", front:true, latter:false, common:"500点", second:"700点", subjects:"数学・理科2・総合問題・面接", recommendation:"学校推薦型選抜Ⅱあり", general:"前期のみ", source:"https://www.ehime-u.ac.jp/wp-content/uploads/2025/06/00_2026_senbatsu.pdf" },
-  "高知大学": underReviewExam("https://nyusi.kochi-u.jp/"),
-  "九州大学": underReviewExam("https://www.kyushu-u.ac.jp/ja/admission/"),
-  "佐賀大学": underReviewExam("https://www.sao.saga-u.ac.jp/"),
-  "長崎大学": underReviewExam("https://www.nagasaki-u.ac.jp/nyugaku/"),
-  "熊本大学": underReviewExam("https://www.kumamoto-u.ac.jp/nyuushi/"),
-  "大分大学": underReviewExam("https://www.oita-u.ac.jp/000005236.shtml"),
-  "宮崎大学": underReviewExam("https://www.miyazaki-u.ac.jp/exam/"),
-  "鹿児島大学": underReviewExam("https://www.kagoshima-u.ac.jp/exam/"),
+  "高知大学": { year:"2027年度", front:true, latter:false, common:"950点", second:"1,000点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜Ⅱ・総合型選抜Ⅰあり", general:"前期のみ", source:"https://nyusi.kochi-u.ac.jp/nyushi/admissions" },
+  "九州大学": { year:"2027年度", front:true, latter:false, common:"475点", second:"700点", subjects:"数学・物理・化学・外国語・面接", recommendation:"一般選抜中心", general:"前期のみ", source:"https://www.kyushu-u.ac.jp/ja/admission/faculty/selection/" },
+  "佐賀大学": { year:"2027年度", front:true, latter:false, common:"640点", second:"800点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜Ⅱあり", general:"前期のみ", source:"https://www.sao.saga-u.ac.jp/gakubu/nyuushi_gaiyou.html" },
+  "長崎大学": { year:"2027年度", front:true, latter:false, common:"465点", second:"890点", subjects:"数学・理科2・外国語・面接・調査書", recommendation:"学校推薦型選抜Ⅱあり", general:"前期のみ", source:"https://www.nagasaki-u.ac.jp/nyugaku/" },
+  "熊本大学": { year:"2027年度", front:true, latter:false, common:"500点", second:"800点", subjects:"数学・理科2・外国語・面接", recommendation:"学校推薦型選抜Ⅱあり", general:"前期のみ", source:"https://www.kumamoto-u.ac.jp/nyuushi/gakubunyushi" },
+  "大分大学": { year:"2027年度", front:true, latter:false, common:"500点", second:"550点", subjects:"数学・理科2・外国語・面接", recommendation:"総合型選抜Ⅱあり", general:"前期のみ", source:"https://www.oita-u.ac.jp/000005236.shtml" },
+  "宮崎大学": { year:"2027年度", front:true, latter:true, common:"950点", second:"600点", subjects:"数学・理科2・外国語・面接", latterCommon:"1,000点", latterSecond:"150点", latterSubjects:"外国語・面接", recommendation:"学校推薦型選抜あり", general:"前期・後期", source:"https://www.miyazaki-u.ac.jp/exam/" },
+  "鹿児島大学": { year:"2027年度", front:true, latter:true, common:"925点", second:"920点", subjects:"数学・理科2・外国語・面接", latterCommon:"925点", latterSecond:"320点", latterSubjects:"小論文・面接", recommendation:"学校推薦型選抜Ⅱあり", general:"前期・後期", source:"https://www.kagoshima-u.ac.jp/exam/" },
   "琉球大学": { year:"2026年度", front:true, latter:true, common:"1,000点", second:"800点", subjects:"数学・理科2・外国語・面接", latterCommon:"1,100点", latterSecond:"300点", latterSubjects:"小論文・面接", recommendation:"学校推薦型選抜Ⅱ・地域枠あり", general:"前期・後期", source:"https://www.u-ryukyu.ac.jp/wp-content/uploads/2025/12/01.r8-ippan-yoko.pdf" },
 };
 
@@ -202,23 +185,6 @@ const trackEvent = (eventName: string, params: AnalyticsParams = {}) => {
     gtag?: (command: "event", name: string, parameters?: AnalyticsParams) => void;
   };
   analyticsWindow.gtag?.("event", eventName, params);
-};
-
-const openExternalLink = (
-  event: MouseEvent<HTMLAnchorElement>,
-  url: string,
-  university: string,
-  linkType: string,
-) => {
-  event.preventDefault();
-  event.stopPropagation();
-  trackEvent("official_link_click", { university, link_type: linkType });
-  const opened = window.open(url, "_blank");
-  if (opened) {
-    opened.opener = null;
-  } else {
-    window.location.assign(url);
-  }
 };
 
 export default function Home() {
@@ -675,7 +641,7 @@ export default function Home() {
                 <b>大学公式の確認資料</b>
                 <div>
                   {selectedColumn.sources.map((source) => (
-                    <a key={source.url} href={source.url} target="_blank" rel="noreferrer" onClick={(event) => openExternalLink(event, source.url, "コラム", "column_source")}>
+                    <a key={source.url} href={source.url} target="_blank" rel="noreferrer">
                       {source.label} <span>↗</span>
                     </a>
                   ))}
@@ -733,7 +699,10 @@ export default function Home() {
                 href={examData[selected.name].source}
                 target="_blank"
                 rel="noreferrer"
-                onClick={(event) => openExternalLink(event, examData[selected.name].source, selected.name, "admissions")}
+                onClick={() => trackEvent("official_link_click", {
+                  university: selected.name,
+                  link_type: "admissions",
+                })}
               ><span>公式</span> 大学公式の入試情報・募集要項を見る ↗</a>
             </div>
             <div className="modal-block accent"><h3>こんな生徒に向く</h3><p>{selected.fit}</p></div>
@@ -784,7 +753,10 @@ export default function Home() {
                           href={item.sourceUrl}
                           target="_blank"
                           rel="noreferrer"
-                          onClick={(event) => openExternalLink(event, item.sourceUrl, selected.name, "campus_reality_source")}
+                          onClick={() => trackEvent("official_link_click", {
+                            university: selected.name,
+                            link_type: "campus_reality_source",
+                          })}
                         >根拠にした公開情報：{item.sourceLabel} ↗</a>
                       </div>
                     </details>
@@ -799,7 +771,10 @@ export default function Home() {
                 href={selected.source}
                 target="_blank"
                 rel="noreferrer"
-                onClick={(event) => openExternalLink(event, selected.source, selected.name, "university")}
+                onClick={() => trackEvent("official_link_click", {
+                  university: selected.name,
+                  link_type: "university",
+                })}
               >大学・医学部公式サイト ↗</a>
               <small>入試情報は上の公式募集要項で最終確認してください。</small>
             </div>
