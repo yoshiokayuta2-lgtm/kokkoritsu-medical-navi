@@ -25,6 +25,9 @@ a{color:inherit;text-decoration:none}
 nav{display:flex;gap:38px;color:var(--navy);font-size:13px;font-weight:700}
 nav a{padding:26px 0 23px;border-bottom:3px solid transparent}
 nav a:hover{border-color:var(--red)}
+nav .series-nav-link{align-self:center;padding:10px 12px;color:#fff;background:var(--navy);border:0}
+nav .series-nav-link:hover{color:var(--navy);background:var(--yellow);border:0}
+.mobile-series-link{display:none}
 nav a b{margin-left:4px;padding:1px 5px;color:#fff;background:var(--red);border-radius:10px;font-size:9px}
 
 .hero{min-height:610px;padding:72px clamp(24px,6vw,92px);display:grid;grid-template-columns:1.08fr .92fr;gap:6vw;align-items:center;position:relative;overflow:hidden;background:linear-gradient(115deg,#fff 0%,#fff 58%,#f1f5f5 58%,#f1f5f5 100%);border-bottom:1px solid var(--line)}
@@ -326,6 +329,7 @@ footer img{width:105px}
 @media(max-width:700px){
   .site-header{height:auto;min-height:66px;padding:12px 17px}
   .brand{gap:9px;font-size:14px}.brand img{width:80px}nav{display:none}
+  .mobile-series-link{display:inline-flex;padding:8px 10px;color:#fff;background:var(--navy);font-size:10px;font-weight:800}
   .hero{padding:48px 21px 62px}.hero h1{font-size:42px}.hero-lead{font-size:15px}
   .hero-actions{flex-direction:column}.button{width:100%}
   .medical-label{font-size:8px;letter-spacing:.1em}.medical-visual{min-height:330px;padding:32px 27px;grid-template-columns:82px 1fr;gap:22px}.medical-cross{width:72px;height:72px}.medical-cross span{width:24px;height:72px;left:24px}.medical-cross i{width:72px;height:24px;top:24px}.medical-visual-copy strong{font-size:78px}
@@ -434,6 +438,7 @@ footer{padding-block:38px;grid-template-columns:1fr;color:#615b51;background:#ff
 .footer-series{margin:0;color:#172031;font-size:12px}
 .footer-series b{margin-right:5px;color:#3559d8;font:italic 800 20px/1 Georgia,serif}
 .footer-note{grid-column:1}
+.footer-series-link{width:max-content;padding-bottom:3px;color:#172031;border-bottom:1px solid #172031;font-size:11px;font-weight:800}
 .compare-dock{background:#3559d8;border-left-color:#f0b429;border-radius:12px}
 .favorite-dock{border-left-color:#f0b429;border-radius:12px}
 .detail-modal{border-top-color:#f0b429;border-radius:18px}
